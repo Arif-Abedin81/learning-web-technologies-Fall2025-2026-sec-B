@@ -1,157 +1,152 @@
+<!DOCTYPE html>
 <html>
 <head>
-    <title>MidLab</title>
+<title>Dynamic Registration Form</title>
+<style>
+    body{ font-family: Arial; margin:20px;}
+    .box{ border:1px solid #555; padding:15px; width:450px; margin-bottom:20px;}
+    label{ display:block; margin-top:10px;}
+    input,select{ padding:6px; width:95%; }
+    .field-row{ margin-bottom: 10px; }
+    .error{ color:red; font-size:13px; }
+    #infoBox{ border:1px solid #333; padding:10px; width:450px; display:none; }
+</style>
 </head>
-
 <body>
-    <form onsubmit="return saveData()">
-        <fieldset>
-            <legend>Data Type Checker</legend>
-            <table>
-
-                <tr>
-                    <td>Username</td>
-                    <td><input type="text" id="username" oninput="checkType('username','type1')" /></td>
-                    <td><p id="type1"></p></td>
-                </tr>
-
-                <tr>
-                    <td>Password</td>
-                    <td><input type="password" id="password" oninput="checkType('password','type2')" /></td>
-                    <td><p id="type2"></p></td>
-                </tr>
-
-                <tr>
-                    <td>Email</td>
-                    <td><input type="text" id="email" oninput="checkType('email','type3')" /></td>
-                    <td><p id="type3"></p></td>
-                </tr>
-
-                <tr>
-                    <td>Gender</td>
-                    <td>
-                        <input type="radio" name="gender" id="male" value="Male" onclick="showGender()" /> Male
-                        <input type="radio" name="gender" id="female" value="Female" onclick="showGender()" /> Female
-                        <input type="radio" name="gender" id="other" value="Other" onclick="showGender()" /> Other
-                    </td>
-                    <td><p id="type4"></p></td>
-                </tr>
-
-                <tr>
-                    <td>Degree</td>
-                    <td>
-                        <input type="checkbox" id="ssc" onclick="showDegree()" /> SSC
-                        <input type="checkbox" id="hsc" onclick="showDegree()" /> HSC
-                        <input type="checkbox" id="bsc" onclick="showDegree()" /> BSc
-                    </td>
-                    <td><p id="type5"></p></td>
-                </tr>
-
-                <tr>
-                    <td>Date of Birth</td>
-                    <td>
-                        <input type="number" id="day" placeholder="dd" style="width:50px;" oninput="showDOB()" /> /
-                        <input type="number" id="month" placeholder="mm" style="width:50px;" oninput="showDOB()" /> /
-                        <input type="number" id="year" placeholder="yyyy" style="width:70px;" oninput="showDOB()" />
-                    </td>
-                    <td><p id="type6"></p></td>
-                </tr>
-
-                <tr>
-                    <td></td>
-                    <td><p id="error" style="color:red;"></p></td>
-                </tr>
-
-                <tr>
-                    <td></td>
-                    <td><input type="submit" value="Save" /></td>
-                </tr>
-
-            </table>
-        </fieldset>
-    </form>
-
+ 
+<h2>Add Field</h2>
+<div class="box">
+<label>Field Name:</label>
+<input type="text" id="fieldName">
+ 
+    <label>Field Type:</label>
+<select id="fieldType">
+<option value="text">Text</option>
+<option value="number">Number</option>
+<option value="date">Date of Birth</option>
+<option value="dropdown">Dropdown</option>
+<option value="checkbox">Checkbox</option>
+<option value="blood">Blood Group</option>
+</select>
+ 
+    <button onclick="addField()">OK</button>
+</div>
+ 
+<h2>Registration Form</h2>
+<form id="regForm" class="box"></form>
+ 
+<button onclick="submitForm()">Submit</button>
+ 
+<h2>Information</h2>
+<div id="infoBox"></div>
+ 
 <script>
-
-function checkType(inputId, typeId) {
-    var value = document.getElementById(inputId).value;
-    var box = document.getElementById(typeId);
-
-    if (value === "") {
-        box.textContent = "";
+let form = document.getElementById("regForm");
+ 
+// predefined blood groups
+const bloodGroups = ["A+","A-","B+","B-","O+","O-","AB+","AB-"];
+ 
+function addField() {
+    let name = document.getElementById("fieldName").value.trim();
+    let type = document.getElementById("fieldType").value;
+ 
+    if (name === "") {
+        alert("Please enter field name!");
         return;
     }
-
-    if (!isNaN(value)) {
-        box.textContent = "Number";
+ 
+    let div = document.createElement("div");
+    div.className = "field-row";
+    div.innerHTML = `<label>${name}</label>`;
+ 
+    // Create input based on type
+    if (type === "text") {
+        div.innerHTML += `<input type='text' name='${name}' data-type='text'><span class='error'></span>`;
     }
-    else if (value.toLowerCase() === "true" || value.toLowerCase() === "false") {
-        box.textContent = "Boolean";
+    else if (type === "number") {
+        div.innerHTML += `<input type='number' name='${name}' data-type='number'><span class='error'></span>`;
     }
-    else {
-        box.textContent = "String";
+    else if (type === "date") {
+        div.innerHTML += `<input type='date' name='${name}' data-type='date'><span class='error'></span>`;
     }
-}
-
-function showGender() {
-    document.getElementById("type4").textContent = "Gender Selected";
-}
-
-function showDegree() {
-    document.getElementById("type5").textContent = "Degree Selected";
-}
-
-function showDOB() {
-    document.getElementById("type6").textContent = "Date Entered";
-}
-
-function saveData() {
-    var username = document.getElementById("username").value;
-    var password = document.getElementById("password").value;
-    var email = document.getElementById("email").value;
-
-    var male = document.getElementById("male").checked;
-    var female = document.getElementById("female").checked;
-    var other = document.getElementById("other").checked;
-
-    var ssc = document.getElementById("ssc").checked;
-    var hsc = document.getElementById("hsc").checked;
-    var bsc = document.getElementById("bsc").checked;
-
-    var day = document.getElementById("day").value;
-    var month = document.getElementById("month").value;
-    var year = document.getElementById("year").value;
-
-    var error = document.getElementById("error");
-
-    // validation
-    if (username === "" || password === "" || email === "" ||
-        (!male && !female && !other) ||
-        (!ssc && !hsc && !bsc) ||
-        day === "" || month === "" || year === "") {
-
-        error.textContent = "All 6 fields must be filled properly.";
-        return false;
+    else if (type === "checkbox") {
+        div.innerHTML += `
+<input type='checkbox' name='${name}' data-type='checkbox'> <span>(Check if Yes)</span>
+<span class='error'></span>`;
     }
-
-    error.textContent = "";
-
-    alert(
-        "Username: " + username + "\n" +
-        "Password: " + password + "\n" +
-        "Email: " + email + "\n" +
-        "Gender: " + (male ? "Male" : female ? "Female" : "Other") + "\n" +
-        "Degree: " +
-            (ssc ? "SSC " : "") +
-            (hsc ? "HSC " : "") +
-            (bsc ? "BSc " : "") + "\n" +
-        "Date of Birth: " + day + "/" + month + "/" + year
-    );
-
-    return true;
+    else if (type === "dropdown") {
+        div.innerHTML += `
+<select name='${name}' data-type='dropdown'>
+<option value="">Select Option</option>
+<option>Option 1</option>
+<option>Option 2</option>
+<option>Option 3</option>
+</select>
+<span class='error'></span>`;
+    }
+    else if (type === "blood") {
+        let options = bloodGroups.map(g => `<option>${g}</option>`).join("");
+        div.innerHTML += `
+<select name='${name}' data-type='blood'>
+<option value="">Select Blood Group</option>
+                ${options}
+</select>
+<span class='error'></span>`;
+    }
+ 
+    form.appendChild(div);
+ 
+    document.getElementById("fieldName").value = "";
 }
-
+ 
+function submitForm() {
+    let inputs = form.querySelectorAll("input,select");
+    let valid = true;
+    let data = {};
+ 
+    inputs.forEach(el => {
+        let fieldName = el.name;
+        let type = el.dataset.type;
+        let errorBox = el.nextElementSibling;
+ 
+        errorBox.innerHTML = "";
+ 
+        if (type !== "checkbox" && el.value.trim() === "") {
+            errorBox.innerHTML = "This field is required!";
+            valid = false;
+        }
+ 
+        // validation rules
+        if (type === "number" && el.value !== "" && isNaN(el.value)) {
+            errorBox.innerHTML = "Invalid number!";
+            valid = false;
+        }
+ 
+        if (valid) {
+            if (type === "checkbox") {
+                data[fieldName] = el.checked ? "Yes" : "No";
+            } else {
+                data[fieldName] = el.value;
+            }
+        }
+    });
+ 
+    if (!valid) return;
+ 
+    showInfo(data);
+}
+ 
+function showInfo(data) {
+    let box = document.getElementById("infoBox");
+    box.innerHTML = "";
+ 
+    for (let key in data) {
+        box.innerHTML += `<b>${key}</b>: ${data[key]} <br>`;
+    }
+ 
+    box.style.display = "block";
+}
 </script>
-
+ 
 </body>
 </html>
